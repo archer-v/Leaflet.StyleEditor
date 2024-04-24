@@ -315,7 +315,7 @@ export default function setupControl () {
       L.DomUtil.removeClass(this.options.cancelUI, 'leaflet-styleeditor-hidden')
     },
 
-    initChangeStyle: function (e) {
+    initChangeStyle: function (e, options) {
       this.removeIndicators()
       this.options.currentElement = (this.options.useGrouping) ? this.getMatchingElement(e) : e
 
@@ -333,21 +333,21 @@ export default function setupControl () {
         // ensure iconOptions are set for Leaflet.Draw created Markers
         this.options.markerType.resetIconOptions()
         // marker
-        this.showMarkerForm(layer)
+        this.showMarkerForm(layer, options)
       } else {
         // layer with of type L.GeoJSON or L.Path (polyline, polygon, ...)
-        this.showGeometryForm(layer)
+        this.showGeometryForm(layer, options)
       }
     },
 
-    showGeometryForm: function (layer) {
+    showGeometryForm: function (layer, options) {
       this.fireEvent('geometry', layer)
-      this.options.styleForm.showGeometryForm()
+      this.options.styleForm.showGeometryForm(options)
     },
 
-    showMarkerForm: function (layer) {
+    showMarkerForm: function (layer, options) {
       this.fireEvent('marker', layer)
-      this.options.styleForm.showMarkerForm()
+      this.options.styleForm.showMarkerForm(options)
     },
 
     createTooltip: function () {

@@ -201,7 +201,10 @@ function setupFormElement() {
     /** create content (where the actual modification takes place) */
     createContent: function () {},
     /** style the FormElement and show it */
-    show: function () {
+    show: function (options) {
+      if (this.setOptions) {
+        this.setOptions(options);
+      }
       this.style();
       this.showForm();
     },
@@ -542,15 +545,19 @@ function setupSizeElement() {
  */
 function setupWeightElement() {
   L.StyleEditor.formElements.WeightElement = L.StyleEditor.formElements.FormElement.extend({
+    defaultOptions: {
+      min: 0,
+      max: 20
+    },
     /** create number input box */
     createContent: function () {
       this.options.label = L.DomUtil.create('span', 'leaflet-styleeditor-input-span', this.options.uiElement);
       let weight = this.options.weight = L.DomUtil.create('input', 'leaflet-styleeditor-input', this.options.uiElement);
       weight.type = 'range';
-      weight.min = 0;
-      weight.max = 20;
+      weight.min = this.defaultOptions.min;
+      weight.max = this.defaultOptions.max;
       weight.step = 1;
-      weight.value = 4;
+      weight.value = 2;
 
       // add event listeners
       L.DomEvent.addListener(weight, 'change', this._setStyle, this);
@@ -560,12 +567,24 @@ function setupWeightElement() {
     },
     /** set correct value */
     style: function () {
-      this.options.weight.value = this.options.styleEditorOptions.util.getStyle(this.options.styleOption);
-      this.options.label.innerText = this.options.weight.value;
+      let value = this.options.styleEditorOptions.util.getStyle(this.options.styleOption) * 1;
+      // limit value to min/max
+      let fixedValue = value;
+      fixedValue = Math.max(fixedValue, this.options.weight.min);
+      fixedValue = Math.min(fixedValue, this.options.weight.max);
+      this.options.weight.value = fixedValue;
+      this.options.label.innerText = fixedValue;
+      if (value !== fixedValue) {
+        this._setStyle();
+      }
     },
     /** communicate weight value */
     _setStyle: function () {
       this.setStyle(this.options.weight.value);
+    },
+    setOptions: function (options) {
+      this.options.weight.min = options && 'min' in options ? options.min : this.defaultOptions.min;
+      this.options.weight.max = options && 'max' in options ? options.max : this.defaultOptions.max;
     }
   });
 }
@@ -616,16 +635,16 @@ function setupForm() {
       this.options.styleEditorOptions.util.hideElement(this.options.parentUiElement);
     },
     /** make FormElements and Form visible */
-    show: function () {
+    show: function (options) {
       this.preShow();
-      this.showFormElements();
+      this.showFormElements(options);
       this.showForm();
       this.style();
     },
     /** hook which is called at the beginning of the show function */
     preShow: function () {},
     /** make every FormElement visible */
-    showFormElements: function () {
+    showFormElements: function (options) {
       for (let i = 0; i < this.options.initializedElements.length; i++) {
         this.showFormElement(this.options.initializedElements[i]);
       }
@@ -649,10 +668,10 @@ function setupForm() {
     /**
      * @returns a Boolean indicating if the @param formElement should be shown
      */
-    showFormElement: function (formElement) {
+    showFormElement: function (formElement, options) {
       // check wether element should be shown or not
       if (this.showFormElementForStyleOption(formElement.options.styleOption)) {
-        formElement.show();
+        formElement.show(options);
       } else {
         formElement.hide();
       }
@@ -785,16 +804,20 @@ function setupGeometryForm() {
       }
     },
     /** show the fillOptions (fillColor and fillOpacity) only if the Element can be filled */
-    showFormElements: function () {
+    showFormElements: function (options) {
       for (let i = 0; i < this.options.initializedElements.length; i++) {
+        let option = null;
+        if (options && this.options.initializedElements[i].options.styleOption in options) {
+          option = options[this.options.initializedElements[i].options.styleOption];
+        }
         if (this.options.initializedElements[i].options.styleOption.indexOf('fill') === 0) {
           if (this.options.styleEditorOptions.util.fillCurrentElement()) {
-            this.showFormElement(this.options.initializedElements[i]);
+            this.showFormElement(this.options.initializedElements[i], option);
           } else {
             this.options.initializedElements[i].hide();
           }
         } else {
-          this.showFormElement(this.options.initializedElements[i]);
+          this.showFormElement(this.options.initializedElements[i], option);
         }
       }
     }
@@ -1111,13 +1134,13 @@ function setupStyleForm() {
       let markerDiv = L.DomUtil.create('div', 'leaflet-styleeditor-interior-geometry', this.options.styleEditorInterior);
       this.options.styleEditorOptions.geometryForm.create(markerDiv);
     },
-    showMarkerForm: function () {
+    showMarkerForm: function (options) {
       this.clearForm();
-      this.options.styleEditorOptions.markerForm.show();
+      this.options.styleEditorOptions.markerForm.show(options);
     },
-    showGeometryForm: function () {
+    showGeometryForm: function (options) {
       this.clearForm();
-      this.options.styleEditorOptions.geometryForm.show();
+      this.options.styleEditorOptions.geometryForm.show(options);
     },
     fireChangeEvent: function (element) {
       this.options.styleEditorOptions.util.fireChangedEvent(element);
@@ -1415,7 +1438,7 @@ function setupControl() {
     showCancelButton: function () {
       L.DomUtil.removeClass(this.options.cancelUI, 'leaflet-styleeditor-hidden');
     },
-    initChangeStyle: function (e) {
+    initChangeStyle: function (e, options) {
       this.removeIndicators();
       this.options.currentElement = this.options.useGrouping ? this.getMatchingElement(e) : e;
       this.addIndicators();
@@ -1430,19 +1453,19 @@ function setupControl() {
         // ensure iconOptions are set for Leaflet.Draw created Markers
         this.options.markerType.resetIconOptions();
         // marker
-        this.showMarkerForm(layer);
+        this.showMarkerForm(layer, options);
       } else {
         // layer with of type L.GeoJSON or L.Path (polyline, polygon, ...)
-        this.showGeometryForm(layer);
+        this.showGeometryForm(layer, options);
       }
     },
-    showGeometryForm: function (layer) {
+    showGeometryForm: function (layer, options) {
       this.fireEvent('geometry', layer);
-      this.options.styleForm.showGeometryForm();
+      this.options.styleForm.showGeometryForm(options);
     },
-    showMarkerForm: function (layer) {
+    showMarkerForm: function (layer, options) {
       this.fireEvent('marker', layer);
-      this.options.styleForm.showMarkerForm();
+      this.options.styleForm.showMarkerForm(options);
     },
     createTooltip: function () {
       if (!this.options.showTooltip) {

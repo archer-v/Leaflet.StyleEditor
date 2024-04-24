@@ -17,16 +17,20 @@ export default function setupGeometryForm () {
     },
 
     /** show the fillOptions (fillColor and fillOpacity) only if the Element can be filled */
-    showFormElements: function () {
+    showFormElements: function (options) {
       for (let i = 0; i < this.options.initializedElements.length; i++) {
+        let option = null
+        if (options && this.options.initializedElements[i].options.styleOption in options) {
+          option = options[this.options.initializedElements[i].options.styleOption]
+        }
         if (this.options.initializedElements[i].options.styleOption.indexOf('fill') === 0) {
           if (this.options.styleEditorOptions.util.fillCurrentElement()) {
-            this.showFormElement(this.options.initializedElements[i])
+            this.showFormElement(this.options.initializedElements[i], option)
           } else {
             this.options.initializedElements[i].hide()
           }
         } else {
-          this.showFormElement(this.options.initializedElements[i])
+          this.showFormElement(this.options.initializedElements[i], option)
         }
       }
     }

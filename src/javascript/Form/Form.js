@@ -51,9 +51,9 @@ export default function setupForm () {
     },
 
     /** make FormElements and Form visible */
-    show: function () {
+    show: function (options) {
       this.preShow()
-      this.showFormElements()
+      this.showFormElements(options)
       this.showForm()
       this.style()
     },
@@ -63,7 +63,7 @@ export default function setupForm () {
     },
 
     /** make every FormElement visible */
-    showFormElements: function () {
+    showFormElements: function (options) {
       for (let i = 0; i < this.options.initializedElements.length; i++) {
         this.showFormElement(this.options.initializedElements[i])
       }
@@ -91,10 +91,10 @@ export default function setupForm () {
     /**
      * @returns a Boolean indicating if the @param formElement should be shown
      */
-    showFormElement: function (formElement) {
+    showFormElement: function (formElement, options) {
       // check wether element should be shown or not
       if (this.showFormElementForStyleOption(formElement.options.styleOption)) {
-        formElement.show()
+        formElement.show(options)
       } else {
         formElement.hide()
       }

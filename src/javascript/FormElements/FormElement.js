@@ -35,7 +35,8 @@ export default function setupFormElement () {
     },
 
     /** style the FormElement and show it */
-    show: function () {
+    show: function (options) {
+      if (this.setOptions) { this.setOptions(options) }
       this.style()
       this.showForm()
     },

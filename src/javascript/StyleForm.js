@@ -33,14 +33,14 @@ export default function setupStyleForm () {
       this.options.styleEditorOptions.geometryForm.create(markerDiv)
     },
 
-    showMarkerForm: function () {
+    showMarkerForm: function (options) {
       this.clearForm()
-      this.options.styleEditorOptions.markerForm.show()
+      this.options.styleEditorOptions.markerForm.show(options)
     },
 
-    showGeometryForm: function () {
+    showGeometryForm: function (options) {
       this.clearForm()
-      this.options.styleEditorOptions.geometryForm.show()
+      this.options.styleEditorOptions.geometryForm.show(options)
     },
 
     fireChangeEvent: function (element) {
