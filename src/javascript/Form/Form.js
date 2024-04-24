@@ -121,25 +121,34 @@ export default function setupForm () {
     getFormElementClass: function (styleOption) {
       let formElements = this.getFormElements()
       let formElementKeys = Object.keys(formElements)
-
       if (formElementKeys.indexOf(styleOption) >= 0) {
         let FormElement = formElements[styleOption]
-
         if (FormElement) {
-          // may be a dictionary
           if (typeof FormElement === 'boolean') {
-            return this.getFormElementStandardClass(styleOption)
+            return this.getFormElementStandardClass(styleOption, {})
+          }
+          let elementOptions = {}
+          // may be a dictionary
+          if (typeof FormElement === 'object') {
+            // FormElement options can be provided in 'options' value
+            if ('options' in FormElement) {
+              elementOptions = FormElement['options']
+            }
+            if (!('formElement' in FormElement)) {
+              return this.getFormElementStandardClass(styleOption, elementOptions)
+            }
+            if ('formElement' in FormElement && 'boolean' in FormElement) {
+              FormElement = FormElement['formElement']
+            }
           }
 
-          if ('formElement' in FormElement && 'boolean' in FormElement) {
-            FormElement = FormElement['formElement']
-          }
           // try to instantiate FormElementOption and return StandardClass if it does not work
           try {
             let formElementInstance = new FormElement({
               styleOption: styleOption,
               parentForm: this,
-              styleEditorOptions: this.options.styleEditorOptions
+              styleEditorOptions: this.options.styleEditorOptions,
+              options: elementOptions
             })
             if (formElementInstance instanceof L.StyleEditor.formElements.FormElement) {
               return formElementInstance
@@ -149,7 +158,7 @@ export default function setupForm () {
           }
         }
         // if nothing works return it
-        return this.getFormElementStandardClass(styleOption)
+        return this.getFormElementStandardClass(styleOption, {})
       }
     },
 
@@ -194,9 +203,12 @@ export default function setupForm () {
      * get Leaflet.StyleEditor standard FormElement class for given styleOption
      * @param {*} styleOption, the styleOption to get the standard class for
      */
-    getFormElementStandardClass (styleOption) {
-      return new this.options.formElements[styleOption](
-        {styleOption: styleOption, parentForm: this, styleEditorOptions: this.options.styleEditorOptions})
+    getFormElementStandardClass (styleOption, elementOptions) {
+      return new this.options.formElements[styleOption](Object.assign({
+        styleOption: styleOption,
+        parentForm: this,
+        styleEditorOptions: this.options.styleEditorOptions
+      }, elementOptions))
     }
   })
 }

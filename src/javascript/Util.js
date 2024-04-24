@@ -17,6 +17,8 @@ export default function setupUtil () {
         this.options.styleEditorOptions.styleEditorEventPrefix + eventName,
         element
       )
+      // notify leaflet layer about style change
+      if (element && typeof element.fireEvent === 'function') { element.fireEvent(this.options.styleEditorOptions.styleEditorEventPrefix + eventName, element) }
     },
 
     /** fire an event if Leaflet.StyleEditor changed something */

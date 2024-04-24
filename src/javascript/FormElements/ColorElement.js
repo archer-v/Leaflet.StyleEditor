@@ -32,7 +32,6 @@ export default function setupColorElement () {
       elem.style.backgroundColor = color
       L.DomEvent.addListener(elem, 'click', this._selectColor, this)
     },
-
     /** set style for chosen color */
     _selectColor: function (e) {
       e.stopPropagation()
@@ -45,6 +44,25 @@ export default function setupColorElement () {
       // marker styling needs additional function calls
       if (this.options.styleEditorOptions.currentElement.target instanceof L.Marker) {
         this.options.styleEditorOptions.markerType.setNewMarker()
+      }
+    },
+    /** decorate colorPicker element with "selected" color **/
+    style: function () {
+      let value = this.options.styleEditorOptions.util.getStyle(this.options.styleOption)
+      let colorIndex = null
+      for (let i = 0; i < this.options.colorRamp.length; i++) {
+        if (this.options.colorRamp[i] === value) {
+          colorIndex = i
+          break
+        }
+      }
+      let colorElements = this.options.colorPickerDiv.getElementsByClassName('leaflet-styleeditor-color')
+      for (let i = 0; i < colorElements.length; i++) {
+        if (i === colorIndex) {
+          colorElements[i].classList.add('leaflet-styleeditor-selected')
+        } else {
+          colorElements[i].classList.remove('leaflet-styleeditor-selected')
+        }
       }
     }
   })

@@ -70,32 +70,28 @@ export default function setupControl () {
       this.options.util.fireEvent(eventName, element)
     },
 
-    createUi: function () {
+    createUi: function (map) {
+      if (this.options.map === undefined) {
+        this.options.map = map
+      }
       let controlDiv = this.options.controlDiv = L.DomUtil.create('div', 'leaflet-control-styleeditor leaflet-control leaflet-bar')
-      let controlUI = this.options.controlUI = L.DomUtil.create('a', 'leaflet-control-styleeditor-interior',
-        controlDiv)
+      let controlUI = this.options.controlUI = L.DomUtil.create('a', 'leaflet-control-styleeditor-interior', controlDiv)
       controlUI.title = 'Style Editor'
-
       let cancel = this.options.cancelUI = L.DomUtil.create('div', 'leaflet-control-styleeditor-cancel leaflet-styleeditor-hidden', controlDiv)
       cancel.innerHTML = this.options.strings.cancel
       cancel.title = this.options.strings.cancelTitle
-
-      let styleEditorDiv = this.options.styleEditorDiv =
-        L.DomUtil.create('div', 'leaflet-styleeditor', this.options.map._container)
+      let styleEditorDiv = this.options.styleEditorDiv = L.DomUtil.create('div', 'leaflet-styleeditor', this.options.map._container)
       this.options.styleEditorHeader = L.DomUtil.create('div', 'leaflet-styleeditor-header', styleEditorDiv)
       let styleEditorInterior = L.DomUtil.create('div', 'leaflet-styleeditor-interior', styleEditorDiv)
-
       this.addDomEvents()
       this.addEventListeners()
       this.addButtons()
-
       this.options.styleForm = new L.StyleForm({
         styleEditorDiv: styleEditorDiv,
         styleEditorInterior: styleEditorInterior,
         styleEditorOptions: this.options
       })
-
-      return controlDiv
+      return this
     },
 
     addDomEvents: function () {
@@ -182,8 +178,7 @@ export default function setupControl () {
     },
 
     addButtons: function () {
-      let nextBtn = L.DomUtil.create('button',
-        'leaflet-styleeditor-button styleeditor-nextBtn', this.options.styleEditorHeader)
+      let nextBtn = L.DomUtil.create('button', 'styleeditor-nextBtn fa fa-caret-right', this.options.styleEditorHeader)
       nextBtn.title = this.options.strings.tooltipNext
 
       L.DomEvent.on(nextBtn, 'click', function (e) {
@@ -191,6 +186,7 @@ export default function setupControl () {
 
         this.hideEditor()
 
+        // this.fireEvent()
         if (L.DomUtil.hasClass(this.options.controlUI, 'enabled')) {
           this.createTooltip()
         }
@@ -213,7 +209,6 @@ export default function setupControl () {
       }
 
       L.DomUtil.addClass(this.options.controlUI, 'enabled')
-      this.options.map.eachLayer(this.addEditClickEvents, this)
       this.showCancelButton()
       this.createTooltip()
 
@@ -299,7 +294,8 @@ export default function setupControl () {
       if (L.DomUtil.hasClass(this.options.styleEditorDiv, 'editor-enabled')) {
         this.removeIndicators()
         L.DomUtil.removeClass(this.options.styleEditorDiv, 'editor-enabled')
-        this.fireEvent('hidden')
+        this.fireEvent('hidden', this.options.util.getCurrentElement())
+        this.options.currentElement = null
       }
     },
 

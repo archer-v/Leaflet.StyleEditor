@@ -191,6 +191,12 @@ If a dictionary is defined you may define supported icons for every color indivi
 
 The **markerForm** can be individually set.
 
+### Build
+
+To build packed minified version:
+```
+npm run webpack
+```
 ### Forms
 
 The StyleForm consists of different Forms, which consist of different FormElements.
