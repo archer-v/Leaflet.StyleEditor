@@ -3,9 +3,7 @@
     background-position: 50% 50%;
     background-size: 50%;
 }
-.leaflet-control-styleeditor-interior:hover {
-    background-color: #07C217;
-}
+
 .leaflet-control-styleeditor .leaflet-control-styleeditor-cancel {
     position: absolute;
     top: 0;
