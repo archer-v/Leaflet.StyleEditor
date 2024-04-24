@@ -1,4 +1,4 @@
-.leaflet-control-styleeditor .leaflet-control-styleeditor-interior {
+.leaflet-control-styleeditor-interior {
     background-image: url('../img/control.svg');
     background-position: 50% 50%;
     background-size: 50%;
@@ -51,8 +51,13 @@
     transform: translatex(0);
     z-index: 1000;
 }
+
+.leaflet-styleeditor-uiElement:not(:first-child) {
+  margin-top: 3px;
+}
+
 .editor-enabled {
-   width: 200px;
+   width: 165px;
 }
 .leaflet-styleeditor-hidden {
     display: none;
@@ -72,13 +77,13 @@
 .leaflet-styleeditor-header {
     position: relative;
     height: 40px;
-    background-color: #b0de5c;
+    background-color: #0074d9;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 .leaflet-styleeditor-interior {
-    padding: 20px;
+    padding: 15px;
     overflow: auto;
     position: relative;
     right: 0px;
@@ -93,24 +98,30 @@
     margin-bottom: 24px;
 }
 .leaflet-styleeditor-label {
+  /*
     width: 100px;
     display: block;
+   */
+    margin-right: 5px;
     font-size: medium;
 }
 .leaflet-styleeditor-input-span {
+  /*
     width: 100%;
     display: inline-block;
     text-align: center;
     font-size: 0.8em;
+   */
+    font-size: medium;
 }
 input.leaflet-styleeditor-input {
-    height: 30px;
+    height: 20px;
     background: #fff;
     margin: 0;
     padding: 0;
     border: 0;
     outline: none;
-    width: 150px;
+    width: 100%;
 }
 textarea.leaflet-styleeditor-input {
     width: 100%;
@@ -123,7 +134,7 @@ textarea.leaflet-styleeditor-input {
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.1);
     outline: none;
-    width: 150px;
+    width: 135px;
     overflow: hidden;
     padding: 0;
 }
@@ -166,7 +177,7 @@ textarea.leaflet-styleeditor-input {
     border: 0px;
     display: inline-block;
     padding: 10px 20px;
-    background: #b0de5c;
+    background: #0074d9;
     height: 40px;
     margin-left: 0px;
     -moz-transition: background-color .25s ease-in-out;
@@ -183,10 +194,16 @@ textarea.leaflet-styleeditor-input {
     cursor: pointer;
 }
 .styleeditor-nextBtn {
-    float: right;
+    float: left;
     margin-right: 0px;
-    background-image: url('../img/icon.png');
-    background-position: 10px -31px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14.4pt;
+    color: #fff;
+    background-color: #0074d9;
+    border: 0;
 }
 .leaflet-styleeditor-button:hover {
     background-color: #00ad87;
@@ -195,18 +212,30 @@ textarea.leaflet-styleeditor-input {
     background-color: #20e1b6;
 }
 .leaflet-styleeditor-colorpicker {
-    width: 160px;
+  /*width: 150px;*/
     display: inline-block;
 }
 .leaflet-styleeditor-color {
-    height: 35px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
     float: left;
     border: 1px solid white;
     cursor: pointer;
 }
 .leaflet-styleeditor-color:hover {
     border:1px solid black;
+}
+.leaflet-styleeditor-color.leaflet-styleeditor-selected {
+    border:1px dotted black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: large;
+    text-shadow: 0px 0px 2px white;
+}
+
+.leaflet-styleeditor-color.leaflet-styleeditor-selected::before {
+    content: "•";
 }
 .leaflet-styleeditor-sizeicon {
     background-image: url('~leaflet/dist/images/marker-icon-2x.png');
@@ -253,11 +282,17 @@ textarea.leaflet-styleeditor-input {
 }
 .leaflet-styleeditor-stroke {
     height: 20px;
-    width: 150px;
+    width: 100%;
     background-repeat: no-repeat;
     border: 1px solid white;
     background-image: url('../img/icon.png');
     cursor: pointer;
+}
+.leaflet-styleeditor-stroke.leaflet-styleeditor-selected {
+  border: 1px dotted black;
+}
+.leaflet-styleeditor-stroke.leaflet-styleeditor-selected:hover {
+  border: 1px solid black;
 }
 .leaflet-styleeditor-stroke:hover {
     border: 1px solid black;
